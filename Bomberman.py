@@ -10,6 +10,16 @@ SCREEN_WIDTH = CELL_W * COLUMN
 SCREEN_HEIGHT = CELL_H * ROW
 SCREEN_TITLE = 'BOMBERMAN'
 
+
+class Boost(arcade.Sprite):
+    def __init__(self, pic):
+        super().__init__(pic, scale= 0.7)
+        self.timer = time.time()
+        print(self.timer)
+    def update(self):
+        pass
+
+
 class Babax(arcade.Sprite):
     def __init__(self, pic):
         super().__init__(pic)
@@ -111,6 +121,25 @@ class MyGame(arcade.Window):
         self.bomber1_sprite = Bombery('Bomberman/Front/Bman_F_f00.png')
         self.bomber2_sprite = Bombery('Bomberman/Front/Bman_F_f00.png')
 
+        self.coords = [
+            [random.randint(0, 4), random.randint(0,4)],
+            [random.randint(5, 9), random.randint(0,4)],
+            [random.randint(10, 14), random.randint(0,4)],
+            [random.randint(15, 16), random.randint(0,4)],
+
+            [random.randint(0, 4), random.randint(5,9)],
+            [random.randint(5, 9), random.randint(5,9)],
+            [random.randint(10, 14), random.randint(5,9)],
+            [random.randint(15, 16), random.randint(5,9)],
+
+            [random.randint(0, 4), random.randint(10,14)],
+            [random.randint(5, 9), random.randint(10,14)],
+            [random.randint(10, 14), random.randint(10,14)],
+            [random.randint(15, 16), random.randint(10,14)],
+
+
+        ]
+
         self.bomber1_sprite.center_x = CELL_W
         self.bomber1_sprite.center_y = CELL_H
         self.bomber2_sprite.center_x = SCREEN_WIDTH - CELL_W
@@ -118,9 +147,15 @@ class MyGame(arcade.Window):
 
         self.bedroc_sprite = arcade.SpriteList()
         self.nebedroc_sprite = arcade.SpriteList()
+
         self.bomb1_sprite = arcade.SpriteList()
         self.bomb2_sprite = arcade.SpriteList()
+
         self.babax_sprite = arcade.SpriteList()
+
+        self.bomb_sprite = arcade.SpriteList()
+        self.flame_sprite = arcade.SpriteList()
+        self.speed_sprite = arcade.SpriteList()
 
         self.speed = 5
         self.mousePres = False
@@ -140,6 +175,26 @@ class MyGame(arcade.Window):
                     block.center_x = x * CELL_W + CELL_W / 2
                     block.center_y = y * CELL_H + CELL_H / 2
                     self.nebedroc_sprite.append(block)
+                    if [x,y] in self.coords:
+                        random_boost = random.randint(a = 1,b = 3)
+                        if random_boost == 1:
+                            boost = Boost('Powerups/BombPowerup.png')
+                            boost.center_x = x * CELL_W + CELL_W / 2
+                            boost.center_y = y * CELL_H + CELL_H / 2
+                            self.bomb_sprite.append(boost)
+
+                        if random_boost == 2:
+                            boost = Boost('Powerups/FlamePowerup.png')
+                            boost.center_x = x * CELL_W + CELL_W / 2
+                            boost.center_y = y * CELL_H + CELL_H / 2
+                            self.flame_sprite.append(boost)
+
+                        if random_boost == 3:
+                            boost = Boost('Powerups/SpeedPowerup.png')
+                            boost.center_x = x * CELL_W + CELL_W / 2
+                            boost.center_y = y * CELL_H + CELL_H / 2
+                            self.speed_sprite.append(boost)
+
 
     def on_draw(self):
         self.clear()
@@ -159,13 +214,37 @@ class MyGame(arcade.Window):
 
         self.babax_sprite.draw()
 
+        self.bomb_sprite.draw()
+        self.flame_sprite.draw()
+        self.speed_sprite.draw()
+
+        arcade.draw_rectangle_outline(CELL_W * 5 / 2, CELL_H * 5 / 2, CELL_W * 5, CELL_H * 5, arcade.color.RED)
+        arcade.draw_rectangle_outline(CELL_W * 15 / 2, CELL_H * 5 / 2, CELL_W * 5, CELL_H * 5, arcade.color.RED)
+        arcade.draw_rectangle_outline(CELL_W * 25 / 2, CELL_H * 5 / 2, CELL_W * 5, CELL_H * 5, arcade.color.RED)
+
+
+        arcade.draw_rectangle_outline(CELL_W * 5 / 2, CELL_H * 15 / 2, CELL_W * 5, CELL_H * 5, arcade.color.RED)
+        arcade.draw_rectangle_outline(CELL_W * 5 / 2, CELL_H * 25 / 2, CELL_W * 5, CELL_H * 5, arcade.color.RED)
+
 
     def on_update(self, delta_time: float):
         self.bomber1_sprite.update()
         self.bomber2_sprite.update()
+
         self.bomb1_sprite.update()
         self.bomb2_sprite.update()
+
         self.babax_sprite.update()
+
+        self.bomb_sprite.update()
+        self.flame_sprite.update()
+        self.speed_sprite.update()
+
+        for flame in self.babax_sprite:
+            for block in self.nebedroc_sprite:
+                if arcade.check_for_collision(flame, block):
+                    block.kill()
+
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         print(x // 60, y // 60)
         if button == arcade.MOUSE_BUTTON_LEFT:
@@ -228,6 +307,14 @@ class MyGame(arcade.Window):
 
             arcade.play_sound(self.bomb_sound)
 
+        elif symbol == arcade.key.RCTRL:
+            bomb = Bomb('Bomb/Bomb_f02.png')
+            bomb.center_x = self.bomber2_sprite.center_x // 60 * CELL_W + CELL_W / 2
+            bomb.center_y = self.bomber2_sprite.center_y // 60 * CELL_W + CELL_W / 2
+            self.bomb2_sprite.append(bomb)
+
+            arcade.play_sound(self.bomb_sound)
+
     def on_key_release(self, symbol: int, modifiers: int):
         if symbol == arcade.key.W:
             self.bomber1_sprite.move = False
@@ -260,10 +347,10 @@ okno = MyGame(width=SCREEN_WIDTH, height=SCREEN_HEIGHT, title=SCREEN_TITLE)
 okno.setup()
 arcade.run()
 
+
 """
-1. Сделать так, чтобы второй бомбермен также мог ставить бомбы
-2. Задание со *: огонь должен "сносить" те блоки, с которыми он столкнулся (с nebedroc_sprite)
-- В классе огней нужно просто сделать проверку на коллизию и если они столкнулись - просто удаляем блок (мы так делали с лазерами и врагами)
-3. В файлах есть бусты . Для них создать три спрайтлиста и попробовать выставить их в случайном месте на карте
+Пофиксить проблему с бустами (спавн бустов)
+
+Сделать так, что если коснулись бустов - они должны нам что-то менять (скорость, кол-во бомб и т.д.)
 
 """
