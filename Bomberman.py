@@ -139,6 +139,28 @@ class MyGame(arcade.Window):
 
 
         ]
+        self.bloki = 8
+        self.coordsNeBedroc = []
+        x1, x2 = 0,4
+        y1, y2 = 0,4
+        for y in range(10):
+
+            for i in range(self.bloki):
+                self.coordsNeBedroc.append([random.randint(x1, x2), random.randint(y1,y2) ])
+            x1 += 5
+            x2 += 5
+            if y == 3:
+                y1 += 5
+                y2 += 5
+                x1 = 0
+                x2 = 4
+            if y == 6:
+                y1 += 5
+                y2 += 5
+                x1 = 0
+                x2 = 4
+
+        print(self.coordsNeBedroc)
 
         self.bomber1_sprite.center_x = CELL_W
         self.bomber1_sprite.center_y = CELL_H
@@ -170,30 +192,30 @@ class MyGame(arcade.Window):
                 block.center_x = x * CELL_W + CELL_W / 2
                 block.center_y = y * CELL_H + CELL_H / 2
 
-                if random.random() < 0.3:
+                if [x,y] in self.coordsNeBedroc:
                     block = Block('Blocks/ExplodableBlock.png')
                     block.center_x = x * CELL_W + CELL_W / 2
                     block.center_y = y * CELL_H + CELL_H / 2
                     self.nebedroc_sprite.append(block)
-                    if [x,y] in self.coords:
-                        random_boost = random.randint(a = 1,b = 3)
-                        if random_boost == 1:
-                            boost = Boost('Powerups/BombPowerup.png')
-                            boost.center_x = x * CELL_W + CELL_W / 2
-                            boost.center_y = y * CELL_H + CELL_H / 2
-                            self.bomb_sprite.append(boost)
+                if [x,y] in self.coords:
+                    random_boost = random.randint(a = 1,b = 3)
+                    if random_boost == 1:
+                        boost = Boost('Powerups/BombPowerup.png')
+                        boost.center_x = x * CELL_W + CELL_W / 2
+                        boost.center_y = y * CELL_H + CELL_H / 2
+                        self.bomb_sprite.append(boost)
 
-                        if random_boost == 2:
-                            boost = Boost('Powerups/FlamePowerup.png')
-                            boost.center_x = x * CELL_W + CELL_W / 2
-                            boost.center_y = y * CELL_H + CELL_H / 2
-                            self.flame_sprite.append(boost)
+                    if random_boost == 2:
+                        boost = Boost('Powerups/FlamePowerup.png')
+                        boost.center_x = x * CELL_W + CELL_W / 2
+                        boost.center_y = y * CELL_H + CELL_H / 2
+                        self.flame_sprite.append(boost)
 
-                        if random_boost == 3:
-                            boost = Boost('Powerups/SpeedPowerup.png')
-                            boost.center_x = x * CELL_W + CELL_W / 2
-                            boost.center_y = y * CELL_H + CELL_H / 2
-                            self.speed_sprite.append(boost)
+                    if random_boost == 3:
+                        boost = Boost('Powerups/SpeedPowerup.png')
+                        boost.center_x = x * CELL_W + CELL_W / 2
+                        boost.center_y = y * CELL_H + CELL_H / 2
+                        self.speed_sprite.append(boost)
 
 
     def on_draw(self):
