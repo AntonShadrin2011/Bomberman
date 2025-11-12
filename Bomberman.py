@@ -139,28 +139,47 @@ class MyGame(arcade.Window):
 
 
         ]
-        self.bloki = 8
+        self.bloki = 4 # 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 поменяй это число на какое-то другое и посмотри результат
+
+        # ------------------------------------------------------ #
+        # self.coordsNeBedroc = []
+        # x1, x2 = 0,4
+        # y1, y2 = 0,4
+        # for y in range(10):
+        #
+        #     for i in range(self.bloki):
+        #         self.coordsNeBedroc.append([random.randint(x1, x2), random.randint(y1,y2) ])
+        #     x1 += 5
+        #     x2 += 5
+        #     if y == 3:
+        #         y1 += 5
+        #         y2 += 5
+        #         x1 = 0
+        #         x2 = 4
+        #     if y == 6:
+        #         y1 += 5
+        #         y2 += 5
+        #         x1 = 0
+        #         x2 = 4
+        #
+        # print(self.coordsNeBedroc)
+        # ------------------------------------------------------ #
+
         self.coordsNeBedroc = []
-        x1, x2 = 0,4
-        y1, y2 = 0,4
-        for y in range(10):
+        for y_block in range(3):
+            for x_block in range(4):
+                block_coords = set()
+                x_start = x_block * 5
+                x_end = x_start + 4
+                y_start = y_block * 5
+                y_end = y_start + 4
 
-            for i in range(self.bloki):
-                self.coordsNeBedroc.append([random.randint(x1, x2), random.randint(y1,y2) ])
-            x1 += 5
-            x2 += 5
-            if y == 3:
-                y1 += 5
-                y2 += 5
-                x1 = 0
-                x2 = 4
-            if y == 6:
-                y1 += 5
-                y2 += 5
-                x1 = 0
-                x2 = 4
+                while len(block_coords) < self.bloki:
+                    new_coord = (random.randint(x_start, x_end), random.randint(y_start, y_end))
+                    block_coords.add(new_coord)
 
-        print(self.coordsNeBedroc)
+                self.coordsNeBedroc.extend([[x, y] for x, y in block_coords])
+
 
         self.bomber1_sprite.center_x = CELL_W
         self.bomber1_sprite.center_y = CELL_H
@@ -371,8 +390,8 @@ arcade.run()
 
 
 """
-Пофиксить проблему с бустами (спавн бустов)
+Сделать так, что если первый игрок коснулся буста со скоростью - нужно прибавить ему скорость
+Точно также и для второго. Буст со скоростью должен прибавлять именно скорость двум игрокам (для этого понадобится переменная со скоростью, конечно же)
 
-Сделать так, что если коснулись бустов - они должны нам что-то менять (скорость, кол-во бомб и т.д.)
-
+:))
 """
